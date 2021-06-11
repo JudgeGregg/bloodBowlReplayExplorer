@@ -1,0 +1,47 @@
+{{define "content"}}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="/static/sortable.min.css" rel="stylesheet" />
+	<script src="/static/sortable.min.js"></script>
+
+        <title>BB2 Replay Explorer</title>
+    </head>
+    <body>
+	  <table class="sortable">
+      <thead>
+      <tr>
+        <th id="date_header">Date</th>
+		<th >Competition</th>
+		<th >Coach</th>
+		<th >Own Team</th>
+		<th >Opponent Team</th>
+		<th >Own Score</th>
+		<th >Opponent Score</th>
+        <th >Replay File</th>
+      </tr>
+      </thead>
+    <tbody>
+    {{range .}}
+    <tr>
+      <td>{{.MatchDate}}</td>
+      <td>{{.CompetitionName}}</td>
+	  <td>{{.Coach}}</td>
+      <td>{{.OwnTeam}}</td>
+      <td>{{.OpponentTeam}}</td>
+      <td>{{.OwnScore}}</td>
+      <td>{{.OpponentScore}}</td>
+	  <td><a href="/replay?replayFile={{.ReplayFileName}}">{{.ReplayFileName}}</a></td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+	<script type="text/javascript">
+	document.getElementById('date_header').click()
+	</script>
+    </body>
+</html>
+{{end}}
