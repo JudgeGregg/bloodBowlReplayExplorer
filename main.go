@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"embed"
 	"encoding/xml"
-	"fmt"
 	"github.com/pkg/browser"
 	"html/template"
 	"io"
@@ -39,7 +38,7 @@ func replay(w http.ResponseWriter, r *http.Request) {
 	fileName := r.FormValue("replayFile")
 	resp, err := postFile(fileName, "https://bloodbowl-parser.nw.r.appspot.com/upload")
 	if err != nil {
-		log.Fatal(err)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	w.Write(resp)
 }
@@ -52,15 +51,15 @@ func postFile(fileName string, targetURL string) ([]byte, error) {
 	// this step is very important
 	fileWriter, err := bodyWriter.CreateFormFile("file", fileName)
 	if err != nil {
-		fmt.Println("error writing to buffer")
+		log.Println("error writing to buffer")
 		return nil, err
 	}
 
 	// open file handle
 	fh, err := os.Open(fileName)
 	if err != nil {
-		fmt.Println("error opening file")
-		fmt.Println(err)
+		log.Println("error opening file")
+		log.Println(err)
 		return nil, err
 	}
 	defer fh.Close()
@@ -83,14 +82,14 @@ func postFile(fileName string, targetURL string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(resp.Status)
+	log.Println(resp.Status)
 	return respBody, nil
 }
 
 func root(w http.ResponseWriter, _ *http.Request) {
 	xmlFile, err := os.Open("ReplayIndex.xml")
 	if err != nil {
-		fmt.Println("No ReplayIndex file found, exiting")
+		log.Println("No ReplayIndex file found, exiting")
 		os.Exit(1)
 	}
 	defer xmlFile.Close()
@@ -122,9 +121,9 @@ func root(w http.ResponseWriter, _ *http.Request) {
 		coachAwayName := record.CoachAwayName
 		coachesHisto[coachAwayName] += 1
 		coachesHisto[coachHomeName] += 1
-		fmt.Print("Competition: " + record.CompetitionName + " ")
-		fmt.Print("CoachHomeName: " + record.CoachHomeName + " ")
-		fmt.Println("CoachAwayName: " + record.CoachAwayName)
+		log.Print("Competition: " + record.CompetitionName + " ")
+		log.Print("CoachHomeName: " + record.CoachHomeName + " ")
+		log.Println("CoachAwayName: " + record.CoachAwayName)
 	}
 
 	var mostPrevalentCoach string
